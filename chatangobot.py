@@ -7,7 +7,7 @@ username = ""
 password = ""
 
 def commands():
-    command_list = ["help","joke","alexa"]
+    command_list = ["help","joke","alexa","hey"]
     return command_list
 
 def list_commands():
@@ -56,6 +56,12 @@ class bot(ch_fixed.RoomManager):
             flag = 1
         elif word.lower() == "alexa" and flag != 1:
             reply = "I won't play despacito"
+            flag = 1
+        elif word.lower() == "hey" or word.lower() == "hai" or word.lower() == "hi" and c == 1 and flag != 1:
+            reply = "hey there, "+user.name+"!"
+            flag = 1
+        elif word.lower() == word.lower() == "hey" or word.lower() == "hai" or word.lower() == "hi" and flag != 1:
+            reply = "hey "+user.name
             flag = 1
         elif flag != 1:
             reply = "Type help for a list of commands"
