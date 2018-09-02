@@ -7,8 +7,12 @@ username = ""
 password = ""
 
 def commands():
-    command_list = ["help","joke","alexa","hey"]
+    command_list = ["help","joke","alexa","hey","pm"]
     return command_list
+
+class recipient_class:
+    def __init__(self, name):
+        self.name = name
 
 def list_commands():
     command_list = commands()
@@ -34,6 +38,20 @@ class bot(ch_fixed.RoomManager):
         if word.lower() == "help" and c ==1:
             reply = list_commands()
             flag = 1
+        elif word.lower() == "pm" and c == 1 and flag != 1:
+            try:
+                recipient = recipient_class(words[1])
+                message_to_send1 = ' '.join(str(w) for w in words[2:])
+                message_to_send2 = "PM from '"+user.name+"': "+message_to_send1
+                self.safePrint('Sent to '+recipient.name+' from '+user.name+': ' + message_to_send1)
+                pm.message(recipient, message_to_send2) # response
+                reply = "Sent!"
+                flag = 1
+            except:
+                reply = "Error!" #empty values
+        elif word.lower() == word.lower() == "pm" and flag != 1:
+            reply = "Just send 'pm' followed by a 'username' and a 'message', eg. 'pm animelov3r69 hey dude'. Type help for a list of commands"
+            flag = 1
         elif word.lower() == "joke" and c == 1 and flag != 1:
             index_value = randint(0,9)
             jokes = ["Doctor: 'I’m sorry but you suffer from a terminal illness and have only 10 to live.'\nPatient: 'What do you mean, 10? 10 what? Months? Weeks?!'\nDoctor: 'Nine.'",
@@ -52,21 +70,37 @@ class bot(ch_fixed.RoomManager):
             reply = "Just send 'joke' for a joke :3 Type help for a list of commands"
             flag = 1
         elif word.lower() == "alexa" and c == 1 and flag != 1:
-            reply = "ɴᴏᴡ ᴘʟᴀʏɪɴɢ: Despacito\n\n─────⚪─────────────────────\n\n◄◄⠀▐▐ ⠀►►⠀⠀1:17 / 3:48 ⠀ ───○ ᴴᴰ ⚙ ❐ ⊏⊐"
+            num1 = randint(0,3)
+            if num1 == 3:
+                num2 = randint(0,4)
+                if num2 == 4:
+                    num3 = randint(0,8)
+                else:
+                    num3 = randint(0,9)
+            else:
+                num2 = randint(0,5)
+                num3 = randint(0,9)
+            time_sec = (num1 * 60)+(num2 * 10)+(num3 * 1)
+            progress_decimal = time_sec/228
+            padding_left = round(27*progress_decimal)
+            padding_right = 27 - padding_left
+            string = "─"*padding_left+"⚪"+"─"*padding_right
+            test = "─────⚪─────────────────────"
+            reply = "ɴᴏᴡ ᴘʟᴀʏɪɴɢ: Despacito\n\n"+string+"\n\n◄◄⠀▐▐ ⠀►►⠀⠀"+str(num1)+":"+str(num2)+str(num3)+" / 3:48 ⠀ ───○ ᴴᴰ ⚙ ❐ ⊏⊐"
             flag = 1
         elif word.lower() == "alexa" and flag != 1:
             reply = "I won't play despacito"
             flag = 1
-        elif word.lower() == "hey" or word.lower() == "hai" or word.lower() == "hi" and c == 1 and flag != 1:
-            reply = "hey there, "+user.name+"!"
+        elif (word.lower() == "hey" or word.lower() == "hai" or word.lower() == "hi") and c == 1 and flag != 1:
+            reply = "Hey there, "+user.name+"!"
             flag = 1
-        elif word.lower() == word.lower() == "hey" or word.lower() == "hai" or word.lower() == "hi" and flag != 1:
-            reply = "hey "+user.name
+        elif (word.lower() == "hey" or word.lower() == "hai" or word.lower() == "hi") and flag != 1:
+            reply = "Hey "+user.name
             flag = 1
         elif flag != 1:
             reply = "Type help for a list of commands"
     # output bot's message
-    self.safePrint('Reply: ' + username + ': ' + reply)
+    self.safePrint('Reply: ' + reply)
     pm.message(user, reply) # response
 
 bot.easy_start(rooms,username,password)
