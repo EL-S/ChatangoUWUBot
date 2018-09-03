@@ -6,8 +6,12 @@ rooms = [""]
 username = ""
 password = ""
 
+def emotion():
+    emotion_list = ["QwQ","UwU","( ͡° ͜ʖ ͡°)","(；人；)","(」ﾟДﾟ」","(´ω｀*)","(*≧∀≦*)","(◯Δ◯∥)"]
+    return " "+emotion_list[randint(0,len(emotion_list)-1)]
+
 def commands():
-    command_list = ["help","joke","alexa","hey","pm"]
+    command_list = ["help","joke","alexa","hey","pm","info"]
     return command_list
 
 class recipient_class:
@@ -45,12 +49,12 @@ class bot(ch_fixed.RoomManager):
                 message_to_send2 = "PM from '"+user.name+"': "+message_to_send1
                 self.safePrint('Sent to '+recipient.name+' from '+user.name+': ' + message_to_send1)
                 pm.message(recipient, message_to_send2) # response
-                reply = "Sent!"
+                reply = "Sent!"+emotion()
                 flag = 1
             except:
                 reply = "Error!" #empty values
         elif word.lower() == word.lower() == "pm" and flag != 1:
-            reply = "Just send 'pm' followed by a 'username' and a 'message', eg. 'pm animelov3r69 hey dude'. Type help for a list of commands"
+            reply = "Just send 'pm' followed by a 'username' and a 'message', eg. 'pm animelov3r69 hey dude'. Type help for a list of commands"+emotion()
             flag = 1
         elif word.lower() == "joke" and c == 1 and flag != 1:
             index_value = randint(0,9)
@@ -67,7 +71,7 @@ class bot(ch_fixed.RoomManager):
             reply = jokes[index_value]
             flag = 1
         elif word.lower() == "joke" and flag != 1:
-            reply = "Just send 'joke' for a joke :3 Type help for a list of commands"
+            reply = "Just send 'joke' for a joke. Type help for a list of commands"+emotion()
             flag = 1
         elif word.lower() == "alexa" and c == 1 and flag != 1:
             num1 = randint(0,3)
@@ -89,16 +93,19 @@ class bot(ch_fixed.RoomManager):
             reply = "ɴᴏᴡ ᴘʟᴀʏɪɴɢ: Despacito\n\n"+string+"\n\n◄◄⠀▐▐ ⠀►►⠀⠀"+str(num1)+":"+str(num2)+str(num3)+" / 3:48 ⠀ ───○ ᴴᴰ ⚙ ❐ ⊏⊐"
             flag = 1
         elif word.lower() == "alexa" and flag != 1:
-            reply = "I won't play despacito"
+            reply = "I won't play despacito"+emotion()
             flag = 1
         elif (word.lower() == "hey" or word.lower() == "hai" or word.lower() == "hi") and c == 1 and flag != 1:
-            reply = "Hey there, "+user.name+"!"
+            reply = "Hey there, "+user.name+"!"+emotion()
             flag = 1
         elif (word.lower() == "hey" or word.lower() == "hai" or word.lower() == "hi") and flag != 1:
-            reply = "Hey "+user.name
+            reply = "Hey "+user.name+emotion()
+            flag = 1
+        elif (word.lower() == "info" or word.lower() == "uwu") and flag != 1:
+            reply = "Hey "+user.name+". I am UWUBot!"+emotion()
             flag = 1
         elif flag != 1:
-            reply = "Type help for a list of commands"
+            reply = "I don't understand '"+response+"'.\n\nTry again or type help for a list of commands."+emotion()
     # output bot's message
     self.safePrint('Reply: ' + reply)
     pm.message(user, reply) # response
