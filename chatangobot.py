@@ -9,24 +9,30 @@ botname = "UWUBot"
 owner = ""
 developer = ""
 
-def emotion(emotion=None):
+def emotion(emotion=None,full_list=False):
+    if full_list:
+        full_emotion_list = ["OwO","QwQ","UwU","( ͡° ͜ʖ ͡°)","(´ω｀*)","ღゝ◡╹)ノ♡",":3","c:","╭( ･ㅂ･)و","(´・ω・｀)","(*≧∀≦*)","(◯Δ◯∥)","¯\_(ツ)_/¯","╮(╯∀╰)╭","乁ʕ •̀ ۝ •́ ʔㄏ","(´・ω・｀)","(╬ಠ益ಠ)","(ಠ ∩ಠ)","(#｀皿´)","(ಥ﹏ಥ)","(⋟﹏⋞)"]
+        if emotion in full_emotion_list:
+            return True
+        else:
+            return False
     if emotion == "happy":
         emotion_list_happy = ["( ͡° ͜ʖ ͡°)","(´ω｀*)","(*≧∀≦*)",":3","c:"]
         return " "+emotion_list_happy[randint(0,len(emotion_list_happy)-1)]
     elif emotion == "confused":
-        emotion_list_confused = ["QwQ","UwU","(◯Δ◯∥)","¯\_(ツ)_/¯","╮(╯∀╰)╭","乁ʕ •̀ ۝ •́ ʔㄏ"]
+        emotion_list_confused = ["OwO","QwQ","UwU","(◯Δ◯∥)","¯\_(ツ)_/¯","╮(╯∀╰)╭","乁ʕ •̀ ۝ •́ ʔㄏ"]
         return " "+emotion_list_confused[randint(0,len(emotion_list_confused)-1)]
     elif emotion == "neutral":
         emotion_list_neutral = ["UwU","( ͡° ͜ʖ ͡°)","╭( ･ㅂ･)و","(´・ω・｀)"]
         return " "+emotion_list_neutral[randint(0,len(emotion_list_neutral)-1)]
     elif emotion == "sad":
-        emotion_list_sad = ["QwQ","UwU","(；人；)","(◯Δ◯∥)","(ಥ﹏ಥ)","(⋟﹏⋞)","(つ﹏<。)"]
+        emotion_list_sad = ["QwQ","UwU","(；人；)","(◯Δ◯∥)","(ಥ﹏ಥ)","(⋟﹏⋞)"] #,"(つ﹏<。)" doesn't print due to the arrow
         return " "+emotion_list_sad[randint(0,len(emotion_list_sad)-1)]
     elif emotion == "angry":
         emotion_list_angry = ["(」ﾟДﾟ」","(◯Δ◯∥)","(╬ಠ益ಠ)","(ಠ ∩ಠ)","(#｀皿´)"]
         return " "+emotion_list_angry[randint(0,len(emotion_list_angry)-1)]
     else:
-        emotion_list = ["QwQ","UwU","( ͡° ͜ʖ ͡°)","(´ω｀*)","ღゝ◡╹)ノ♡",":3","c:","╭( ･ㅂ･)و","(´・ω・｀)"]
+        emotion_list = ["OwO","QwQ","UwU","( ͡° ͜ʖ ͡°)","(´ω｀*)","ღゝ◡╹)ノ♡",":3","c:","╭( ･ㅂ･)و","(´・ω・｀)"]
         return " "+emotion_list[randint(0,len(emotion_list)-1)]
 
 def commands():
@@ -71,7 +77,7 @@ class bot(ch_fixed.RoomManager):
                 reply = "Sent!"+emotion("happy")
                 flag = 1
             except:
-                reply = "Error!" #empty values
+                reply = "Empty user or empty message!" #empty values
         elif word.lower() == word.lower() == "pm" and flag != 1:
             reply = "Just send 'pm' followed by a 'username' and a 'message', eg. 'pm animelov3r69 hey dude'. Type help for a list of commands"+emotion("neutral")
             flag = 1
@@ -149,7 +155,13 @@ class bot(ch_fixed.RoomManager):
             reply = "Hey "+user.name+". I am "+botname+"!\n\nI am owned and operated by "+owner+" and developed by "+developer+"!"+emotion("excited")
             flag = 1
         elif flag != 1:
-            if response != "":
+            if response != "" and c == 1:
+                boolean = emotion(response,True) #checks if the emoji is a registered one
+                if boolean:
+                    reply = response #if so, it responds with it
+                else:
+                    reply = "I don't understand '"+response+"'.\n\nTry again or type help for a list of commands."+emotion("sad")
+            elif response != "":
                 reply = "I don't understand '"+response+"'.\n\nTry again or type help for a list of commands."+emotion("sad")
             else:
                 reply = "Stop trying to confuse me with empty messages"+emotion("angry")
