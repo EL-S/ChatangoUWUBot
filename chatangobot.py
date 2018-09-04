@@ -69,40 +69,55 @@ class bot(ch_fixed.RoomManager):
             flag = 1
         elif word.lower() == "pm" and c == 1 and flag != 1:
             try:
-                recipient = recipient_class(words[1])
-                message_to_send1 = ' '.join(str(w) for w in words[2:])
-                message_to_send2 = "PM from '"+user.name+"': "+message_to_send1
-                self.safePrint('Sent to '+recipient.name+' from '+user.name+': ' + message_to_send1)
-                pm.message(recipient, message_to_send2) # response
-                reply = "Sent!"+emotion("happy")
-                flag = 1
+                if words[1] != "" and words[2] != "":
+                    recipient = recipient_class(words[1])
+                    message_to_send1 = ' '.join(str(w) for w in words[2:])
+                    message_to_send2 = "PM from '"+user.name+"': "+message_to_send1
+                    self.safePrint('Sent to '+recipient.name+' from '+user.name+': ' + message_to_send1)
+                    pm.message(recipient, message_to_send2) # response
+                    reply = "Sent!"+emotion("happy")
+                    flag = 1
+                else:
+                    reply = "Empty user or empty message!" #empty values
+                    flag = 1
             except:
                 reply = "Empty user or empty message!" #empty values
+                flag = 1
         elif word.lower() == word.lower() == "pm" and flag != 1:
             reply = "Just send 'pm' followed by a 'username' and a 'message', eg. 'pm animelov3r69 hey dude'. Type help for a list of commands"+emotion("neutral")
             flag = 1
         elif word.lower() == "hug" and c == 1 and flag != 1:
             try:
-                recipient = recipient_class(words[1])
-                hug_to_send = "'"+user.name+"' hugged you &lt;3" #< character won't work for some reason without alt code
-                self.safePrint('Hug sent to '+recipient.name+' from '+user.name)
-                print(hug_to_send)
-                pm.message(recipient, hug_to_send) # response
-                reply = "Hug sent!"+emotion("happy")
-                flag = 1
+                if words[1] != "":
+                    recipient = recipient_class(words[1])
+                    hug_to_send = "'"+user.name+"' hugged you &lt;3" #< character won't work for some reason without alt code
+                    self.safePrint('Hug sent to '+recipient.name+' from '+user.name)
+                    print(hug_to_send)
+                    pm.message(recipient, hug_to_send) # response
+                    reply = "Hug sent!"+emotion("happy")
+                    flag = 1
+                else:
+                    reply = "*hugs you &lt;3*" #empty values
+                    flag = 1
             except:
                 reply = "*hugs you &lt;3*" #empty values
+                flag = 1
         elif (word.lower() == "featurereq" or word.lower() == "featurerequest" or word.lower() == "fr") and c == 1 and flag != 1:
             try:
-                recipient = recipient_class(developer)
-                message_to_send1 = ' '.join(str(w) for w in words[1:])
-                message_to_send2 = "Feature Request from '"+user.name+"' for '"+botname+"': "+message_to_send1
-                self.safePrint('Sent to DEV '+recipient.name+' from '+user.name+': ' + message_to_send1)
-                pm.message(recipient, message_to_send2) # response
-                reply = "Feature Request Sent!"+emotion("excited")
-                flag = 1
+                if words[1] != "":
+                    recipient = recipient_class(developer)
+                    message_to_send1 = ' '.join(str(w) for w in words[1:])
+                    message_to_send2 = "Feature Request from '"+user.name+"' for '"+botname+"': "+message_to_send1
+                    self.safePrint('Sent to DEV '+recipient.name+' from '+user.name+': ' + message_to_send1)
+                    pm.message(recipient, message_to_send2) # response
+                    reply = "Feature Request Sent!"+emotion("excited")
+                    flag = 1
+                else:
+                    reply = "No request attached!" #empty values
+                    flag = 1
             except:
-                reply = "Error!" #empty values
+                reply = "No request attached!" #empty values
+                flag = 1
         elif (word.lower() == "featurereq" or word.lower() == "featurerequest" or word.lower() == "fr") and flag != 1:
             reply = "Just send 'fr' followed by a 'feature request', eg. 'fr add this command'. Type help for a list of commands"+emotion("neutral")
             flag = 1
