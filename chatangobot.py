@@ -30,7 +30,7 @@ def emotion(emotion=None):
         return " "+emotion_list[randint(0,len(emotion_list)-1)]
 
 def commands():
-    command_list = ["help","joke","alexa","hey","pm","featurerequest","info"]
+    command_list = ["help","joke","alexa","hey","pm","featurerequest","hug","info"]
     return command_list
 
 class recipient_class:
@@ -75,6 +75,17 @@ class bot(ch_fixed.RoomManager):
         elif word.lower() == word.lower() == "pm" and flag != 1:
             reply = "Just send 'pm' followed by a 'username' and a 'message', eg. 'pm animelov3r69 hey dude'. Type help for a list of commands"+emotion("neutral")
             flag = 1
+        elif word.lower() == "hug" and c == 1 and flag != 1:
+            try:
+                recipient = recipient_class(words[1])
+                hug_to_send = "'"+user.name+"' hugged you &lt;3" #< character won't work for some reason without alt code
+                self.safePrint('Hug sent to '+recipient.name+' from '+user.name)
+                print(hug_to_send)
+                pm.message(recipient, hug_to_send) # response
+                reply = "Hug sent!"+emotion("happy")
+                flag = 1
+            except:
+                reply = "*hugs you &lt;3*" #empty values
         elif (word.lower() == "featurereq" or word.lower() == "featurerequest" or word.lower() == "fr") and c == 1 and flag != 1:
             try:
                 recipient = recipient_class(developer)
