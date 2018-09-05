@@ -21,7 +21,7 @@ def init():
 def check_for_new_user(username):
     with open("new_user.txt", "r+") as file:
         for line in file:
-            if line == username:
+            if line.strip() == username:
                 return True
     with open("new_user.txt", "a+") as file:
         file.write(username+"\n")
