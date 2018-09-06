@@ -1,6 +1,8 @@
 import ch_fixed
 from math import sqrt
 from random import randint
+import re
+import sqlite3
 
 rooms = [""]
 username = ""
@@ -9,23 +11,53 @@ botname = "UWUBot"
 owner = ""
 developer = ""
 
+connection = sqlite3.connect('chat_data.sqlite')
+cursor = connection.cursor()
+
 def init():
-    try:
-        with open("new_user.txt", "r") as file:
+
+    # create the tables needed by the program
+    create_table_request_list = [
+        'CREATE TABLE usernames(username TEXT UNIQUE, username_status INT NOT NULL)',
+        'CREATE TABLE messages(message TEXT UNIQUE, message_status INT NOT NULL)',
+        'CREATE TABLE associations (username_id INT NOT NULL, message_id INT NOT NULL, recipient_id INT NOT NULL)',
+    ]
+    for create_table_request in create_table_request_list:
+        try:
+            cursor.execute(create_table_request)
+        except:
             pass
-    except FileNotFoundError:
-        with open("new_user.txt", "w") as file:
-            file.write("")
-            return init()
-        
+
+def get_id(entityName, text):
+    """Retrieve an entity's unique ID from the database, given its associated text.
+    If the row is not already present, it is inserted.
+    The entity can either be a sentence or a word."""
+    tableName = entityName + 's'
+    columnName = entityName
+    columnStatus = entityName + '_status'
+    value = 0
+    cursor.execute('SELECT rowid FROM ' + tableName + ' WHERE ' + columnName + ' = ?', (text,))
+    row = cursor.fetchone()
+    if row:
+        return row[0]
+    else:
+        value = 1
+        cursor.execute('INSERT INTO ' + tableName + ' (' + columnName + ', ' + columnStatus + ') VALUES (?,?)', (text, value))
+        return cursor.lastrowid
+
 def check_for_new_user(username):
-    with open("new_user.txt", "r+") as file:
-        for line in file:
-            if line.strip() == username:
-                return True
-    with open("new_user.txt", "a+") as file:
-        file.write(username+"\n")
-    return False
+    print(username)
+    cursor.execute('select rowid from usernames where username=?', (username,))
+    result = cursor.fetchone()
+    if result is None:
+        username_id = get_id('username', username) #add them to db and set them as an old user
+        return True
+    else:
+        return False #old user
+
+def store_message(username_id, message_id, recipient_id):
+    cursor.execute('INSERT INTO associations VALUES (?, ?, ?)', (username_id, message_id, recipient_id))
+    return
 
 def emotion(emotion=None,full_list=False):
     if full_list:
@@ -76,7 +108,7 @@ class bot(ch_fixed.RoomManager):
  
   def onPMMessage(self, pm, user, response):
     self.safePrint('PM: ' + user.name + ': ' + response)
-    if not check_for_new_user(user.name):
+    if check_for_new_user(user.name):
         reply = "Hey "+user.name+"! You're a new user so I just want to let you know to type 'help' to get started"+emotion("happy")
     else: #old user
         c = 0
