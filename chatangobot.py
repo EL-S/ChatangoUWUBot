@@ -19,7 +19,7 @@ def init():
     # create the tables needed by the program
     create_table_request_list = [
         'CREATE TABLE usernames(username TEXT UNIQUE, username_status INT NOT NULL)',
-        'CREATE TABLE messages(message TEXT UNIQUE, message_status INT NOT NULL)',
+        'CREATE TABLE messages(message TEXT, message_status INT NOT NULL)',
         'CREATE TABLE associations (username_id INT NOT NULL, message_id INT NOT NULL, recipient_id INT NOT NULL)',
     ]
     for create_table_request in create_table_request_list:
@@ -28,7 +28,7 @@ def init():
         except:
             pass
 
-def get_id(entityName, text):
+def get_id(entityName, text, specialcase=False):
     """Retrieve an entity's unique ID from the database, given its associated text.
     If the row is not already present, it is inserted.
     The entity can either be a sentence or a word."""
@@ -36,26 +36,48 @@ def get_id(entityName, text):
     columnName = entityName
     columnStatus = entityName + '_status'
     value = 0
-    cursor.execute('SELECT rowid FROM ' + tableName + ' WHERE ' + columnName + ' = ?', (text,))
-    row = cursor.fetchone()
+    if entityName == 'message':
+        value = 1
+        cursor.execute('INSERT INTO ' + tableName + ' (' + columnName + ', ' + columnStatus + ') VALUES (?,?)', (text, value))
+        return cursor.lastrowid
+    elif specialcase == 1:
+        cursor.execute('SELECT rowid FROM ' + tableName + ' WHERE ' + columnName + ' = ?', (text,))
+        row = cursor.fetchone()
+        if row:
+            return row[0]
+        else:
+            value = 0 #recipient shall remain new
+            cursor.execute('INSERT INTO ' + tableName + ' (' + columnName + ', ' + columnStatus + ') VALUES (?,?)', (text, value))
+            return cursor.lastrowid
+        
+    else:
+        cursor.execute('SELECT rowid, ' + columnStatus + ' FROM ' + tableName + ' WHERE ' + columnName + ' = ?', (text,))
+        row = cursor.fetchone()
     if row:
+        if (row[1] == 0) and (specialcase == 2):
+            cursor.execute('UPDATE usernames SET username_status=1 WHERE username=?', (text,))
         return row[0]
     else:
-        value = 1
+        value = 1 #no longer new
         cursor.execute('INSERT INTO ' + tableName + ' (' + columnName + ', ' + columnStatus + ') VALUES (?,?)', (text, value))
         return cursor.lastrowid
 
 def check_for_new_user(username):
-    print(username)
-    cursor.execute('select rowid from usernames where username=?', (username,))
+    cursor.execute('select rowid, username_status from usernames where username=?', (username,))
     result = cursor.fetchone()
-    if result is None:
+    if (result is None):
         username_id = get_id('username', username) #add them to db and set them as an old user
+        return True
+    elif (result[1] == 0):
+        username_id = get_id('username', username, 2) #update them to an old user
         return True
     else:
         return False #old user
 
-def store_message(username_id, message_id, recipient_id):
+def store_message(username, message, recipient):
+    username_id = get_id('username', username)
+    message_id = get_id('message', message)
+    recipient_id = get_id('username', recipient, 1)
     cursor.execute('INSERT INTO associations VALUES (?, ?, ?)', (username_id, message_id, recipient_id))
     return
 
@@ -98,6 +120,11 @@ def list_commands():
     reply = "Commands: "+', '.join(str(command) for command in command_list)
     return reply
 
+def send_message(username, message, recipient, pm):
+    pm.message(recipient, message) # response
+    store_message(username, message, recipient.name)
+    return
+
 class bot(ch_fixed.RoomManager):
   def onInit(self):
     self.setNameColor("FFFFFF")
@@ -105,12 +132,14 @@ class bot(ch_fixed.RoomManager):
     self.setFontFace("Arial")
     self.setFontSize(11)
     print('Bot Initialised...')
- 
+
   def onPMMessage(self, pm, user, response):
     self.safePrint('PM: ' + user.name + ': ' + response)
     if check_for_new_user(user.name):
         reply = "Hey "+user.name+"! You're a new user so I just want to let you know to type 'help' to get started"+emotion("happy")
+        store_message(user.name, response, username)
     else: #old user
+        store_message(user.name, response, username)
         c = 0
         words = response.split(" ")
         flag = 0
@@ -127,7 +156,8 @@ class bot(ch_fixed.RoomManager):
                         message_to_send1 = ' '.join(str(w) for w in words[2:])
                         message_to_send2 = "PM from '"+user.name+"': "+message_to_send1
                         self.safePrint('Sent to '+recipient.name+' from '+user.name+': ' + message_to_send1)
-                        pm.message(recipient, message_to_send2) # response
+                        send_message(username, message_to_send2, recipient, pm)
+                        #pm.message(recipient, message_to_send2) # response
                         reply = "Sent!"+emotion("happy")
                         flag = 1
                     else:
@@ -146,7 +176,8 @@ class bot(ch_fixed.RoomManager):
                         hug_to_send = "'"+user.name+"' hugged you &lt;3" #< character won't work for some reason without alt code
                         self.safePrint('Hug sent to '+recipient.name+' from '+user.name)
                         print(hug_to_send)
-                        pm.message(recipient, hug_to_send) # response
+                        send_message(username, hug_to_send, recipient, pm)
+                        #pm.message(recipient, hug_to_send) # response
                         reply = "Hug sent!"+emotion("happy")
                         flag = 1
                     else:
@@ -162,7 +193,8 @@ class bot(ch_fixed.RoomManager):
                         message_to_send1 = ' '.join(str(w) for w in words[1:])
                         message_to_send2 = "Feature Request from '"+user.name+"' for '"+botname+"': "+message_to_send1
                         self.safePrint('Sent to DEV '+recipient.name+' from '+user.name+': ' + message_to_send1)
-                        pm.message(recipient, message_to_send2) # response
+                        send_message(username, message_to_send2, recipient, pm)
+                        #pm.message(recipient, message_to_send2) # response
                         reply = "Feature Request Sent!"+emotion("excited")
                         flag = 1
                     else:
@@ -236,7 +268,9 @@ class bot(ch_fixed.RoomManager):
     
     # output bot's message
     self.safePrint('Reply: ' + reply)
-    pm.message(user, reply) # response
+    send_message(username, reply, user, pm)
+    connection.commit() #SAVE DATABASE
+    #pm.message(user, reply) # response
 
 init()
 bot.easy_start(rooms,username,password)
