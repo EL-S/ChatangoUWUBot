@@ -108,7 +108,7 @@ def emotion(emotion=None,full_list=False):
         return " "+emotion_list[randint(0,len(emotion_list)-1)]
 
 def commands():
-    command_list = ["help","joke","alexa","hey","pm","featurerequest","hug","info"]
+    command_list = ["help","joke","alexa","hey","pm","featurerequest","hug","slap","info"]
     return command_list
 
 class recipient_class:
@@ -185,6 +185,22 @@ class bot(ch_fixed.RoomManager):
                         flag = 1
                 except:
                     reply = "*hugs you &lt;3*" #empty values
+                    flag = 1
+            elif word.lower() == "slap" and c == 1 and flag != 1:
+                try:
+                    if words[1] != "":
+                        recipient = recipient_class(words[1])
+                        slap_to_send = "'"+user.name+"' slapped you &lt;/3"+emotion("angry") #< character won't work for some reason without alt code
+                        self.safePrint('Slap sent to '+recipient.name+' from '+user.name)
+                        print(slap_to_send)
+                        send_message(username, slap_to_send, recipient, pm)
+                        reply = "Slap sent!"+emotion("angry")
+                        flag = 1
+                    else:
+                        reply = "*slaps you &lt;/3"+"*"+emotion("angry") #empty values
+                        flag = 1
+                except:
+                    reply = "*slaps you &lt;/3"+"*"+emotion("angry") #empty values
                     flag = 1
             elif (word.lower() == "featurereq" or word.lower() == "featurerequest" or word.lower() == "fr") and c == 1 and flag != 1:
                 try:
