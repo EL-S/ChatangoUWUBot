@@ -173,7 +173,7 @@ class bot(ch_fixed.RoomManager):
                 try:
                     if words[1] != "":
                         recipient = recipient_class(words[1])
-                        hug_to_send = "'"+user.name+"' hugged you &lt;3" #< character won't work for some reason without alt code
+                        hug_to_send = user.name+" hugged you &lt;3" #< character won't work for some reason without alt code
                         self.safePrint('Hug sent to '+recipient.name+' from '+user.name)
                         print(hug_to_send)
                         send_message(username, hug_to_send, recipient, pm)
@@ -190,7 +190,7 @@ class bot(ch_fixed.RoomManager):
                 try:
                     if words[1] != "":
                         recipient = recipient_class(words[1])
-                        slap_to_send = "'"+user.name+"' slapped you &lt;/3"+emotion("angry") #< character won't work for some reason without alt code
+                        slap_to_send = user.name+" slapped you &lt;/3"+emotion("angry") #< character won't work for some reason without alt code
                         self.safePrint('Slap sent to '+recipient.name+' from '+user.name)
                         print(slap_to_send)
                         send_message(username, slap_to_send, recipient, pm)
