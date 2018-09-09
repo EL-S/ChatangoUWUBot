@@ -98,11 +98,14 @@ def emotion(emotion=None,full_list=False):
         emotion_list_neutral = ["UwU","( ͡° ͜ʖ ͡°)","╭( ･ㅂ･)و","(´・ω・｀)"]
         return " "+emotion_list_neutral[randint(0,len(emotion_list_neutral)-1)]
     elif emotion == "sad":
-        emotion_list_sad = ["QwQ","UwU","(；人；)","(◯Δ◯∥)","(ಥ﹏ಥ)","(⋟﹏⋞)"] #,"(つ﹏<。)" doesn't print due to the arrow
+        emotion_list_sad = ["QwQ","UwU","(；人；)","(◯Δ◯∥)","(ಥ﹏ಥ)","(⋟﹏⋞)","(つ﹏&lt;。)"] #,"(つ﹏<。)" now prints due to the arrow alt code instead
         return " "+emotion_list_sad[randint(0,len(emotion_list_sad)-1)]
     elif emotion == "angry":
         emotion_list_angry = ["(」ﾟДﾟ」","(◯Δ◯∥)","(╬ಠ益ಠ)","(ಠ ∩ಠ)","(#｀皿´)"]
         return " "+emotion_list_angry[randint(0,len(emotion_list_angry)-1)]
+    elif emotion == "love":
+        emotion_list_love = ["(￣3￣)","(･´з`･)","(●´з`)♡","(´∀｀)♡","(´ε｀ )♡","(づ￣ ³￣)づ","(｡’▽’｡)♡","♡(∩o∩)♡","(♥ω♥*)","(๑・ω-)～♥”","L(*OεV*)E","(｡･ω･｡)ﾉ♡","～(^з^)-♡","（●´∀｀）ノ♡","(´ ▽｀).。ｏ♡","(♡˙︶˙♡)","♡(`ω`)♡","(๑♡∀♡๑)","( ˘ ³˘)♥","(๑ơ ₃ ơ)♥","٩(๛ ˘ ³˘)۶♥","(ﾉ*&gt;∀&lt;)ﾉ♡","（*＾3＾）/～♡","\(-ㅂ-)/ ♥ ♥ ♥","◌⑅⃝●♡⋆♡LOVE♡⋆♡●⑅◌","Σ&gt;―(〃°ω°〃)♡→","♪ ♬ ヾ(´︶`♡)ﾉ ♬ ♪","⁄(⁄ ⁄•⁄ω⁄•⁄ ⁄)⁄","♪☆＼(^０^＼) ♪(／^-^)／☆","♪＼(*＾▽＾*)／＼(*＾▽＾*)／"," ♡⃛◟( ˊ̱˂˃ˋ̱ )◞⸜₍ ˍ́˱˲ˍ̀ ₎⸝◟( ˊ̱˂˃ˋ̱ )◞♡⃛","≥3≤"]
+        return " "+emotion_list_love[randint(0,len(emotion_list_love)-1)]
     else:
         emotion_list = ["OwO","QwQ","UwU","( ͡° ͜ʖ ͡°)","(´ω｀*)","ღゝ◡╹)ノ♡",":3","c:","╭( ･ㅂ･)و","(´・ω・｀)"]
         return " "+emotion_list[randint(0,len(emotion_list)-1)]
@@ -173,18 +176,18 @@ class bot(ch_fixed.RoomManager):
                 try:
                     if words[1] != "":
                         recipient = recipient_class(words[1])
-                        hug_to_send = user.name+" hugged you &lt;3" #< character won't work for some reason without alt code
+                        hug_to_send = user.name+" hugged you"+emotion("love") #< character won't work for some reason without alt code
                         self.safePrint('Hug sent to '+recipient.name+' from '+user.name)
                         print(hug_to_send)
                         send_message(username, hug_to_send, recipient, pm)
                         #pm.message(recipient, hug_to_send) # response
-                        reply = "Hug sent!"+emotion("happy")
+                        reply = "Hug sent!"+emotion("love")
                         flag = 1
                     else:
-                        reply = "*hugs you &lt;3*" #empty values
+                        reply = "*hugs you*"+emotion("love") #empty values
                         flag = 1
                 except:
-                    reply = "*hugs you &lt;3*" #empty values
+                    reply = "*hugs you*"+emotion("love") #empty values
                     flag = 1
             elif word.lower() == "slap" and c == 1 and flag != 1:
                 try:
