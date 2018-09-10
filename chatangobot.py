@@ -8,8 +8,8 @@ rooms = [""]
 username = ""
 password = ""
 botname = "UWUBot"
-owner = ""
-developer = ""
+owner = "AnimeLov3r69"
+developer = "AnimeLov3r69"
 
 connection = sqlite3.connect('chat_data.sqlite')
 cursor = connection.cursor()
@@ -110,8 +110,15 @@ def emotion(emotion=None,full_list=False):
         emotion_list = ["OwO","QwQ","UwU","( ͡° ͜ʖ ͡°)","(´ω｀*)","ღゝ◡╹)ノ♡",":3","c:","╭( ･ㅂ･)و","(´・ω・｀)"]
         return " "+emotion_list[randint(0,len(emotion_list)-1)]
 
+def check_status(username):
+    row = get_id('username', username)
+    if not row: #not implemented
+        return True
+    else:
+        return False
+
 def commands():
-    command_list = ["help","joke","alexa","hey","pm","featurerequest","hug","slap","info"]
+    command_list = ["help","joke","alexa","hey","pm","featurerequest","hug","slap","hangman","info"]
     return command_list
 
 class recipient_class:
@@ -144,6 +151,9 @@ class bot(ch_fixed.RoomManager):
     else: #old user
         store_message(user.name, response, username)
         c = 0
+        status = get_status(user.name)
+        if status:
+            reply = "not immplemented"
         words = response.split(" ")
         flag = 0
         reply = ""
