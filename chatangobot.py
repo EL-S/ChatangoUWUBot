@@ -5,11 +5,11 @@ import re
 import sqlite3
 
 rooms = [""]
-username = "uwubot"
-password = "yourmum69"
+username = ""
+password = ""
 botname = "UWUBot"
-owner = "AnimeLov3r69"
-developer = "AnimeLov3r69"
+owner = ""
+developer = ""
 
 connection = sqlite3.connect('chat_data.sqlite')
 cursor = connection.cursor()
@@ -126,18 +126,8 @@ def get_status(username,attempt=False):
     else: #db error
         return False
 
-def get_last_message(username):
-    username_id = get_id('username', username)
-    cursor.execute('SELECT message_id FROM associations WHERE username_id = ?', (username_id,))
-    row = cursor.fetchall()
-    row = row[len(row)-1][0]
-    cursor.execute('SELECT message FROM messages WHERE rowid = ?', (row,))
-    message = cursor.fetchone()
-    print(message)
-    return message[0]
-
 def commands():
-    command_list = ["help","joke","alexa","hey","pm","featurerequest","hug","slap","rockpaperscissors","info"]
+    command_list = ["help","joke","alexa","hey","pm","featurerequest","hug","slap","hangman","info"]
     return command_list
 
 class recipient_class:
@@ -171,67 +161,31 @@ class bot(ch_fixed.RoomManager):
         store_message(user.name, response, username)
         status = get_status(user.name)
         if status:
-            last_message = get_last_message(user.name) #there is literally no point in this here, just use response lmao
-            flag = False
-            moves = ["r","p","s"]
-            ai_move = moves[randint(0,2)]
-            if last_message[0].lower() == "r":
-                word1 = "Rock"
-                flag = True
-            elif last_message[0].lower() == "p":
-                word1 = "Paper"
-                flag = True
-            elif last_message[0].lower() == "s":
-                word1 = "Scissors"
-                flag = True
-            if ai_move == "r":
-                word2 = "Rock"
-            elif ai_move == "p":
-                word2 = "Paper"
-            elif ai_move == "s":
-                word2 = "Scissors"
-            if flag:
-                battle_words = "You: "+word1+" vs. AI: "+word2+"\n"
-            if last_message[0].lower() == ai_move:
-                reply = battle_words+"Draw!"
-            elif last_message[0].lower() == "r" and ai_move == "s":
-                reply = battle_words+"You win!"
-            elif last_message[0].lower() == "r" and ai_move == "p":
-                reply = battle_words+"You lose!"
-            elif last_message[0].lower() == "p" and ai_move == "r":
-                reply = battle_words+"You win!"
-            elif last_message[0].lower() == "p" and ai_move == "s":
-                reply = battle_words+"You lose!"
-            elif last_message[0].lower() == "s" and ai_move == "p":
-                reply = battle_words+"You win!"
-            elif last_message[0].lower() == "s" and ai_move == "r":
-                reply = battle_words+"You lose!"
-            else:
-                reply = "Game In Progress, 'quit'."
-                c = 0
-                words = response.split(" ")
-                flag = 0
-                reply = ""
-                for word in words:
-                    c += 1
-                    if word.lower() == "rockpaperscissors" and c ==1:
-                            status = get_status(user.name, True)
-                            if status:
-                                reply = "You are now playing unimplemented game! Type 'quit' to quit."
-                                flag = 1
-                            else:
-                                reply = "You are already playing!"
-                                flag = 1
-                    elif word.lower() == "quit" and c ==1:
-                        status = get_status(user.name,'quit')
+            reply = "Game In Progress, 'quit'."
+            c = 0
+            words = response.split(" ")
+            flag = 0
+            reply = ""
+            for word in words:
+                c += 1
+                if word.lower() == "hangman" and c ==1:
+                        status = get_status(user.name, True)
                         if status:
-                            reply = "You quit the game!"
+                            reply = "You are now playing unimplemented hangman! Type 'quit' to quit."
                             flag = 1
                         else:
-                            reply = "You are not playing!"
+                            reply = "You are already playing!"
                             flag = 1
+                elif word.lower() == "quit" and c ==1:
+                    status = get_status(user.name,'quit')
+                    if status:
+                        reply = "You quit the game!"
+                        flag = 1
                     else:
-                        reply = "Unknown game specific command '" + response + "' Type 'quit'."
+                        reply = "You are not playing!"
+                        flag = 1
+                else:
+                    reply = "Unknown game specific command '" + response + "' Type 'quit'."
         else:
             c = 0
             words = response.split(" ")
@@ -242,10 +196,10 @@ class bot(ch_fixed.RoomManager):
                 if word.lower() == "help" and c ==1:
                     reply = list_commands()
                     flag = 1
-                elif ((word.lower() == "rockpaperscissors") or (word.lower() == "rps")) and c ==1:
+                elif word.lower() == "hangman" and c ==1:
                     status = get_status(user.name, True)
                     if status:
-                        reply = "You are now playing rockpaperscissors! Type 'quit' to quit."
+                        reply = "You are now playing hangman! Type 'quit' to quit."
                         flag = 1
                     else:
                         reply = "You are already playing!"
