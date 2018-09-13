@@ -136,16 +136,19 @@ def get_last_message(username):
     print(message)
     return message[0]
 
-def commands():
-    command_list = ["help","joke","alexa","hey","pm","featurerequest","hug","slap","rockpaperscissors","info"]
+def commands(username):
+    if username.lower() == owner.lower():
+        command_list = ["help","joke","alexa","hey","pm","featurerequest","hug","slap","rockpaperscissors","info","admin"]
+    else:
+        command_list = ["help","joke","alexa","hey","pm","featurerequest","hug","slap","rockpaperscissors","info"]
     return command_list
 
 class recipient_class:
     def __init__(self, name):
         self.name = name
 
-def list_commands():
-    command_list = commands()
+def list_commands(username):
+    command_list = commands(username)
     reply = "Commands: "+', '.join(str(command) for command in command_list)
     return reply
 
@@ -239,8 +242,11 @@ class bot(ch_fixed.RoomManager):
             reply = ""
             for word in words:
                 c += 1
-                if word.lower() == "help" and c ==1:
-                    reply = list_commands()
+                if word.lower() == "help" and c == 1:
+                    reply = list_commands(user.name)
+                    flag = 1
+                elif (word.lower() == "admin" and c == 1) and (user.name.lower() == owner.lower()):
+                    reply = "You are the admin!"+emotion("happy")
                     flag = 1
                 elif ((word.lower() == "rockpaperscissors") or (word.lower() == "rps")) and c ==1:
                     status = get_status(user.name, True)
@@ -250,7 +256,7 @@ class bot(ch_fixed.RoomManager):
                     else:
                         reply = "You are already playing!"
                         flag = 1
-                elif word.lower() == "quit" and c ==1:
+                elif word.lower() == "quit" and c == 1:
                     status = get_status(user.name,'quit')
                     if status:
                         reply = "You quit the game!"
