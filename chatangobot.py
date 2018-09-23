@@ -246,7 +246,7 @@ class bot(ch_fixed.RoomManager):
                     reply = list_commands(user.name)
                     flag = 1
                 elif (word.lower() == "admin" and c == 1) and (user.name.lower() == owner.lower()):
-                    reply = "You are the admin!"+emotion("happy")
+                    reply = "You are the admin! You should add more commands"+emotion("happy")
                     flag = 1
                 elif ((word.lower() == "rockpaperscissors") or (word.lower() == "rps")) and c ==1:
                     status = get_status(user.name, True)
